@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 struct thread
 {
 	tss_t *tss;
+	uint32_t cr3;
 	uint32_t esp0;
 	uint32_t esp;
 
@@ -50,10 +51,11 @@ struct thread
 #endif
 
 #define THREAD_TSS		0
-#define THREAD_ESP0		4
-#define THREAD_ESP		8
-#define THREAD_NEED_RESCHEDULE	12
-#define THREAD_COUNTER		16
+#define THREAD_CR3		4
+#define THREAD_ESP0		8
+#define THREAD_ESP		12
+#define THREAD_NEED_RESCHEDULE	16
+#define THREAD_COUNTER		20
 
 #ifndef ASM
 

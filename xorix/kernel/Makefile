@@ -7,10 +7,10 @@ LIBS = $(LIBDIR)/libc/libc.a $(LIBDIR)/libxorix/libxorix.a \
        $(LIBDIR)/libgcc/libgcc.a
 
 SRCS = multiboot.S console.c cpu.c gdt.c idt.c \
-       memory.c setup.c shutdown.c page.c page_pae.c \
+       memory.c setup.c page.c page_pg.c page_pae.c \
        entry.S apm.c bootmem.c debug.c apic.c \
        smp.c smpboot.S sleep.c kmalloc.c spinlock.c \
-       cmos.c task.c
+       cmos.c task.c shutdown.c
 
 OBJS = $(subst .c,.o,$(subst .S,.o,$(SRCS)))
 

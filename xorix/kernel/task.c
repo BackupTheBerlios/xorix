@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "debug.h"
 #include "entry.h"
 #include "memory.h"
+#include "page.h"
 #include "spinlock.h"
 #include "multiboot.h"
 #include "cpu.h"
@@ -251,6 +252,7 @@ void create_kernel_thread(void *function)
 	esp0 = PAGE2BYTE(page + 1);
 	esp = (uint32_t *) (esp0 - (6 * sizeof(uint32_t)));
 
+	thread->cr3 = kernel_cr3;
 	thread->esp0 = esp0;
 	thread->esp = (uint32_t) esp;
 
@@ -283,9 +285,8 @@ void task_init()
 	// Kernel-Thread initialiesieren...
 
 	t_kernel = &kernel_stack;
-	t_kernel->tss = NULL;
+	t_kernel->cr3 = kernel_cr3;
 	t_kernel->esp0 = ((uint32_t) t_kernel) + PAGE_SIZE;;
-	t_kernel->esp = 0; /* ??? */
 	t_kernel->state = THREAD_READY;
 	t_kernel->priority = MAX_PRIORITY;
 
@@ -310,7 +311,7 @@ void task_init()
 	// IDLE-Thread fuer den BSP erzeugen...
 
 	t_idle = &idle_stack;
-	t_idle->tss = NULL;
+	t_idle->cr3 = kernel_cr3;
 	t_idle->esp0 = ((uint32_t) t_idle) + PAGE_SIZE;
 	t_idle->esp = t_idle->esp0 - (6 * sizeof(uint32_t));
 	t_idle->state = THREAD_IDLE;
@@ -357,9 +358,8 @@ void ap_task_init()
 	// IDLE-Thread fuer den AP erzeugen...
 
 	t_idle = get_current_thread();
-	t_idle->tss = NULL; /* ??? */
+	t_idle->cr3 = kernel_cr3;
 	t_idle->esp0 = ((uint32_t) t_idle) + PAGE_SIZE;;
-	t_idle->esp = 0; /* ??? */
 	t_idle->state = THREAD_IDLE;
 	t_idle->priority = 0;
 

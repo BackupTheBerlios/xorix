@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "debug.h"
 #include "cpu.h"
+#include "memory.h"
 #include "page.h"
 #include "idt.h"
 #include "entry.h"

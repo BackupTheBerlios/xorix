@@ -173,7 +173,6 @@ void setup()
 {
 	idt_init();
 	gdt_init();
-	task_init();
 	cpu_init();
 
 	multiboot_info = evacuate_multiboot_info(multiboot_info);
@@ -181,6 +180,7 @@ void setup()
 
 	memory_init();
 	pageing_init();
+	task_init();
 	smp_init();
 	//apm_init();
 

@@ -270,20 +270,67 @@ struct pae_kmap_table
 	void *ptr;
 };
 
-extern volatile pae_pdpt_t *mother_pdpt;
+void *__pae_kmap(unsigned long page);
+static inline void *pae_kmap(unsigned long page)
+{
+	if(page < MAX_LOW_PAGES)
+		return PAGE2PTR(page);
 
-extern bool use_pae;
-extern bool use_pge;
-extern bool use_pse;
+	return __pae_kmap(page);
+}
+
+void __pae_kunmap(unsigned long page);
+static inline void pae_kunmap(unsigned long page)
+{
+	if(page < MAX_LOW_PAGES)
+		return;
+
+	__pae_kunmap(page);
+	return;
+}
+
+static inline void pae_clear_page(unsigned long page)
+{
+	uint32_t d0, d1;
+	void *p;
+
+	p = pae_kmap(page);
+
+	asm volatile("cld; rep; stosl"
+	             :"=D" (d0), "=c" (d1)
+	             :"D" (p), "a" (0), "c" (1024)
+	             :"memory");
+
+	pae_kunmap(page);
+
+	return;
+}
+
+static inline void pae_copy_page(unsigned long d_page, unsigned long s_page)
+{
+	uint32_t d0, d1, d2;
+	void *d;
+	void *s;
+
+	d = pae_kmap(d_page);
+	s = pae_kmap(s_page);
+
+	asm volatile("cld; rep; movsl"
+	             :"=D" (d0), "=S" (d1), "=c" (d2)
+	             :"D" (d), "S" (s),"c" (1024)
+	             :"memory");
+
+	pae_kunmap(s_page);
+	pae_kunmap(d_page);
+
+	return;
+}
 
 void *pae_vmalloc(size_t size);
 void pae_vfree(void *ptr);
 
 void *pae_ioremap(void *ptr, size_t size);
 void pae_iounmap(void *ptr);
-
-void *pae_kmap(unsigned long page);
-void pae_kunmap(unsigned long page);
 
 void pae_pageing_init();
 void pae_ap_pageing_init();

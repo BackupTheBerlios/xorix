@@ -114,32 +114,34 @@ boot_syscall:
 
 .align 4
 context_switch:
-	pushfl
-	pushl %ebp
-	pushl %esi
-	pushl %edi
-	pushl %ebx
+		pushfl
+		pushl %ebp
+		pushl %esi
+		pushl %edi
+		pushl %ebx
 
-	cli
+		cli
 
-	GET_CURRENT_THREAD(%esi)
-	movl %esp,THREAD_ESP(%esi)
+		GET_CURRENT_THREAD(%esi)
+		movl %esp,THREAD_ESP(%esi)
 
-	movl 24(%esp),%edi
-	movl THREAD_ESP(%edi),%esp
-	movl $0,THREAD_NEED_RESCHEDULE(%edi)
+		movl 24(%esp),%edi
+		movl THREAD_CR3(%edi),%eax
+		movl %eax,%cr3
+		movl THREAD_ESP(%edi),%esp
+		movl $0,THREAD_NEED_RESCHEDULE(%edi)
 
-	movl THREAD_TSS(%esi),%eax
-	movl THREAD_ESP0(%edi),%ebx
-	movl %ebx,TSS_ESP0(%eax)
-	movl %eax,THREAD_TSS(%edi)
+		movl THREAD_TSS(%esi),%eax
+		movl THREAD_ESP0(%edi),%ebx
+		movl %ebx,TSS_ESP0(%eax)
+		movl %eax,THREAD_TSS(%edi)
 
-	popl %ebx
-	popl %edi
-	popl %esi
-	popl %ebp
-	popfl
-	ret
+		popl %ebx
+		popl %edi
+		popl %esi
+		popl %ebp
+		popfl
+		ret
 
 .comm jiffies, 4
 .comm wait_halt, 4
