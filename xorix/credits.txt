@@ -1,0 +1,13 @@
+
+CREDITS
+-------
+
+Name:	Gregor "NERO" Weckbecker
+E-Mail:	nero@users.berlios.de
+WWW:	?
+Info:	Console
+
+Name:	Ingmar "SuperFranz" Friedrichsen
+E-Mail:	ingmar@xorix.org
+WWW:	http://www.superfranz.com/
+Info:	Maintainer...
